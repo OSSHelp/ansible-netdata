@@ -1,0 +1,11 @@
+---
+- name: reload netdata unit
+  systemd:
+    daemon_reload: yes
+
+- name: enable cgroups accounting
+  systemd:
+    daemon_reexec: yes
+
+- name: restart netdata service
+  include_tasks: restart_netdata.yml

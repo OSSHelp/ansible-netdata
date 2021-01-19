@@ -1,0 +1,27 @@
+---
+- name: Debug registered var
+  debug: var=haproxy_pass
+
+- name: parsing haproxy config for auth user
+  shell: |
+    set -o pipefail
+    test -f {{ haproxy_config_path }} && grep 'stats auth' {{ haproxy_config_path }} | awk '{print $3}' | cut -f1 -d':'
+  register: haproxy_auth_user
+  when: not netdata_force_all_plugins_installation
+  changed_when: false
+
+- name: parsing haproxy config for auth password
+  shell: |
+    set -o pipefail
+    test -f {{ haproxy_config_path }} && grep 'stats auth' {{ haproxy_config_path }} | awk '{print $3}' | cut -f2 -d':'
+  register: haproxy_auth_pass
+  when: not netdata_force_all_plugins_installation
+  changed_when: false
+
+- name: Debug registered var
+  debug: var=haproxy_auth_pass.stdout
+  when: not netdata_force_all_plugins_installation
+
+- name: deploy haproxy.conf in python.d
+  template: src=haproxy.j2 dest=/etc/netdata/python.d/haproxy.conf group=netdata mode=0o640
+  notify: restart netdata service

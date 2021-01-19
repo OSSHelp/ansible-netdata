@@ -1,0 +1,5 @@
+---
+- name: deploy phpfpm.conf in python.d
+  template: src=phpfpm.j2 dest=/etc/netdata/python.d/phpfpm.conf group=netdata mode=0o640
+  notify: restart netdata service
+  when: phpfpm_pools

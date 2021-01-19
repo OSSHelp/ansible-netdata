@@ -1,0 +1,8 @@
+---
+- name: deploy memcached.conf in python.d
+  template:
+    src: memcached.j2
+    dest: /etc/netdata/python.d/memcached.conf
+    group: netdata
+    mode: 0640
+  notify: restart netdata service

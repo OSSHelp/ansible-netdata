@@ -1,0 +1,85 @@
+---
+### common vars
+
+netdata_setup: full
+
+hostname: "{{inventory_hostname}}"
+apikey: ''
+netdata_force_create_db_user: false
+netdata_version: ''
+
+netdata_timeout_stop_sec: 10
+netdata_dynamic_stop_timeout: true
+
+## vars for python.d plugin configs
+
+force_monit_plugin_installation: true
+web_lob_plugin_enabled: true
+
+plugin_retries: 300
+plugin_autodetection_retry: 300
+
+mysql_socket_path: /var/run/mysqld/mysqld.sock
+nginx_stat_url: 'http://localhost/nginx_status'
+apache_stat_url: 'http://localhost:8080/server-status?auto'
+fpm_stat_url: "http://localhost/fpm-status-{{pool_name}}?full&json"
+monit_url: 'http://localhost:2812'
+memcached_port: 11211
+haproxy_user: user
+haproxy_pass: PaSSw0rd
+haproxy_url: 'http://127.0.0.1:9000/haproxy;csv;norefresh'
+haproxy_config_path: /etc/haproxy/haproxy.cfg
+
+fping_hosts: '8.8.8.8 8.8.4.4'
+smartd_exclude_drives:
+
+tomcat_service_name: tomcat
+tomcat_stat_url: 'http://localhost:8285/manager/status?XML=true'
+tomcat_user: monitor
+tomcat_pass: paSSw0rd
+tomcat_connector: http-bio-8285
+
+phpfpm_pools:
+  - www
+general_fpm_url_part: 'http://localhost/fpm-status'
+
+web_log_params:
+  name: 'example.com'
+  path: '/var/log/nginx/access.log'
+  histogram: '50,100,200,500,1000,2000,5000'
+  pattern: '(?P<address>[\da-f.:]+).*(?P<date>\[.+\])\s(?P<code>[1-9]\d{2})\s\".*\"\s\"(?P<method>[A-Z]+)\s(?P<url>.*?)\s.+\"\s(?P<bytes_sent>\d+)\s(?P<resp_time>\d+\.\d+)'
+
+web_log_categories:
+  - { key: main, value: '^/$' }
+  - { key: admin, value: '^/(\w{2}\/)?admin/' }
+
+netdata_apps_groups_conf_src:
+  default: /usr/lib/x86_64-linux-gnu/netdata/conf.d/apps_groups.conf
+  focal: /usr/lib/netdata/conf.d/apps_groups.conf
+
+### var for official last version
+
+# for reinstall or update
+force_install: false
+
+# turn it on for physical servers
+physical: false
+
+# not for common usage, only for role builds
+netdata_force_all_plugins_installation: false
+netdata_force_host_system: false
+
+netdata_bind9_params:
+  named_stats_path: /var/log/named/named.stats
+
+netdata_enable_app_plugin_in_lxc: false
+
+netdata_prometheus_params:
+  autodetection_retry: 300
+  max_time_series: 2048
+  priority: 70000
+  update_every: 10
+
+netdata_memory_mode: dbengine
+netdata_page_cache_size: 16
+netdata_dbengine_multihost_disk_space: 1024

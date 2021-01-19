@@ -1,0 +1,22 @@
+[Service]
+User=root
+LimitNOFILE=65536
+{% if ansible_distribution_release == 'xenial' %}
+PermissionsStartOnly=true
+ExecStartPost=/bin/ln -sf /var/run/netdata/netdata.pid /var/run/netdata.pid
+{% elif ansible_distribution_release == 'bionic' %}
+ExecStart=
+ExecStart=/usr/sbin/netdata -D -P /var/run/netdata/netdata.pid
+ExecStartPost=+/bin/ln -sf /var/run/netdata/netdata.pid /var/run/netdata.pid
+{% elif ansible_distribution_release == 'focal' %}
+ExecStart=
+ExecStart=/usr/sbin/netdata -D -P /var/run/netdata/netdata.pid
+ExecStartPost=+/usr/bin/ln -sf /var/run/netdata/netdata.pid /var/run/netdata.pid
+{% endif %}
+{% if ansible_distribution_release != 'xenial' %}
+{% if (netdata_force_host_system or ansible_virtualization_type != 'lxc') and (netdata_memory_mode == 'dbengine' and netdata_dynamic_stop_timeout and netdata_dbengine_multihost_disk_space > 100) %}
+TimeoutStopSec={{ netdata_timeout_stop_sec + netdata_dbengine_multihost_disk_space // 100 }}
+{% else %}
+TimeoutStopSec={{ netdata_timeout_stop_sec }}
+{% endif %}
+{% endif %}

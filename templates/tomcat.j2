@@ -1,0 +1,8 @@
+localhost:
+  name : '{{ tomcat_service_name }}'
+  url  : '{{ tomcat_stat_url }}'
+  user : '{{ tomcat_user }}'
+  pass : '{{ tomcat_pass }}'
+  connector_name: '{{ tomcat_connector }}'
+  retries: {{ plugin_retries }}
+  autodetection_retry: {{ plugin_autodetection_retry }}

@@ -1,0 +1,4 @@
+---
+- name: deploy tomcat.conf in python.d
+  template: src=tomcat.j2 dest=/etc/netdata/python.d/tomcat.conf group=netdata mode=0o640
+  notify: restart netdata service

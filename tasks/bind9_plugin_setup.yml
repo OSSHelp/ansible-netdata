@@ -1,0 +1,24 @@
+---
+
+- name: generate bind_rndc.conf in /etc/netdata/python.d
+  template:
+    src: bind9.j2
+    dest: /etc/netdata/python.d/bind_rndc.conf
+    group: netdata
+    mode: 0640
+  notify: restart netdata service
+
+- name: add netdata to group "bind" if needed
+  user:
+    name: netdata
+    groups: bind
+    append: yes
+  when: "'bind9' in service_list"
+
+- name: correct permissions for /etc/bind/rndc.key
+  file:
+    path: /etc/bind/rndc.key
+    owner: bind
+    group: netdata
+    mode: 0640
+  when: "'bind9' in service_list"

@@ -1,0 +1,8 @@
+{% for pool in phpfpm_pools %}
+local-{{ pool }}:
+  name: '{{ pool }}'
+  url: '{{ general_fpm_url_part }}-{{ pool }}?full&json'
+  retries: {{ plugin_retries }}
+  autodetection_retry: {{ plugin_autodetection_retry }}
+
+{% endfor %}

@@ -1,0 +1,132 @@
+---
+- name: gather required facts
+  setup:
+    gather_subset: [min, virtual]
+  when: ansible_distribution_release is not defined or ansible_virtualization_type is not defined
+
+- name: install required packages
+  apt:
+    name:
+      - curl
+      - gnupg
+      - apt-transport-https
+    update_cache: true
+    cache_valid_time: 86400
+
+- name: install common packages
+  apt:
+    name:
+      - bash
+      - iproute2
+      - python-dnspython
+      - libmnl0
+      - netcat
+    update_cache: true
+    cache_valid_time: 86400
+
+- name: install hardware packages
+  apt:
+    name: lm-sensors
+    update_cache: true
+    cache_valid_time: 86400
+  notify: restart netdata service
+  when: physical
+
+- name: enable systemd accounting by default
+  lineinfile:
+    dest: /etc/systemd/system.conf
+    regexp: "#?{{ item }}="
+    line: "{{ item }}=yes"
+  with_items:
+    - DefaultCPUAccounting
+    - DefaultBlockIOAccounting
+    - DefaultMemoryAccounting
+  notify:
+    - restart netdata service
+    - enable cgroups accounting
+  when: ansible_virtualization_type != 'lxc'
+
+- name: add pgp key
+  apt_key:
+    url: "https://packagecloud.io/netdata/netdata/gpgkey"
+    state: present
+
+- name: add main repo
+  apt_repository:
+    repo: "deb https://packagecloud.io/netdata/netdata/ubuntu/ {{ ansible_distribution_release }} main"
+    state: present
+    filename: netdata
+
+- name: install netdata
+  apt:
+    name: "netdata{{ '=' ~ netdata_version if netdata_version|length > 0 else '' }}"
+    update_cache: true
+    cache_valid_time: 86400
+
+- name: create netdata.service.d directory
+  file:
+    path: /etc/systemd/system/netdata.service.d
+    state: directory
+    mode: '0755'
+
+- name: create netdata.service override
+  template:
+    src: netdata-override.j2
+    dest: /etc/systemd/system/netdata.service.d/override.conf
+  notify:
+    - reload netdata unit
+    - restart netdata service
+
+- name: generate health_alarm_notify.conf
+  template:
+    src: health_alarm_notify.j2
+    dest: /etc/netdata/health_alarm_notify.conf
+  notify: restart netdata service
+
+- name: check if groups cfg exists
+  stat:
+    path: /etc/netdata/apps_groups.conf
+  register: groups_cfg
+
+- name: copy apps_groups.conf
+  copy:
+    remote_src: true
+    src: /usr/lib/netdata/conf.d/apps_groups.conf
+    dest: /etc/netdata/apps_groups.conf
+    owner: root
+    group: root
+    mode: 0644
+  when: not groups_cfg.stat.exists
+  notify: restart netdata service
+
+- name: manage apps_groups.conf
+  lineinfile:
+    path: /etc/netdata/apps_groups.conf
+    state: "{{ item.state|default('present') }}"
+    regexp: "{{ item.regex }}"
+    line: "{{ item.line|default('') }}"
+    insertafter: "# NETDATA processes accounting"
+  loop:
+    - {regex: "^nodejs:", line: "nodejs: node nodejs"}
+    - {regex: "^php-fpm:", line: "php-fpm: php5-fpm php7-fpm php-fpm*"}
+    - {regex: "^php:", line: "php: php* php5"}
+    - {regex: "^memcached:", line: "memcached: memcached"}
+    - {regex: "^redis:", line: "redis: redis-server"}
+    - {regex: "^nginx:", line: "nginx: nginx*"}
+    - {regex: "^httpd:", line: "httpd: apache* httpd lighttpd"}
+    - {regex: "^backup:", line: "backup: custom.backup* v-backup-users v-delete-user-backup* pbackup bacula*"}
+  notify: restart netdata service
+
+- name: logrotate config fix
+  lineinfile:
+    dest: /etc/logrotate.d/netdata
+    line: "          /bin/kill -HUP `pidof -c netdata 2>/dev/null` 2>/dev/null || true"
+    regexp: "^\\s+/bin/kill.+"
+
+- meta: flush_handlers
+
+- name: service check
+  service:
+    name: netdata
+    enabled: yes
+    state: started

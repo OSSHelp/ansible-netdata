@@ -1,0 +1,18 @@
+---
+
+- name: stop monit
+  systemd:
+    name: monit
+    state: stopped
+  when: monit_in_list|default(false)
+
+- name: restart netdata
+  systemd:
+    name: netdata
+    state: restarted
+
+- name: start monit
+  systemd:
+    name: monit
+    state: started
+  when: monit_in_list|default(false)

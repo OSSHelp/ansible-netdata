@@ -1,0 +1,4 @@
+---
+- name: Deploy smartd.conf in python.d
+  template: src=smartd.j2 dest=/etc/netdata/python.d/smartd_log.conf group=netdata mode=0o640
+  notify: restart netdata service

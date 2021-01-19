@@ -1,0 +1,38 @@
+---
+- name: Install Python2 packages
+  apt:
+    name: [python-pymongo]
+    state: present
+    update_cache: yes
+    cache_valid_time: 86400
+  when: ansible_distribution_release in ['xenial', 'bionic']
+
+- name: Install Python3 packages
+  apt:
+    name: [python3-pymongo]
+    state: present
+    update_cache: yes
+    cache_valid_time: 86400
+  when: ansible_distribution_release in ['focal']
+
+- name: Cheking auth parameter in /etc/mongodb.conf
+  shell: grep -qE ^'auth = true' /etc/mongodb.conf; echo $?
+  register: mongodb_auth_enabled
+  changed_when: false
+
+- name: Create netdata user in MongoDB
+  mongodb_user:
+    name: netdata
+    database: admin
+    password: "{{ lookup('password', '/tmp/mongopass length=16 chars=ascii_letters,digits') }}"
+    roles: clusterMonitor
+    update_password: on_create
+  when: mongodb_auth_enabled.stdout == "0" and (ansible_virtualization_type != 'lxc' or netdata_force_create_db_user)
+
+- name: Deploy mongodb.conf in python.d
+  template:
+    src: mongodb.j2
+    dest: /etc/netdata/python.d/mongodb.conf
+    group: netdata
+    mode: 0o640
+  notify: restart netdata service

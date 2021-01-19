@@ -1,0 +1,6 @@
+---
+- name: create netdata go.d.plugin configuration for prometheus
+  template:
+    src: prometheus.j2
+    dest: /etc/netdata/go.d/prometheus.conf
+    mode: 0644

@@ -1,0 +1,24 @@
+---
+- block:
+
+    - name: gather required facts
+      setup:
+        gather_subset: [min]
+      when: ansible_distribution_release is not defined
+
+    - name: install latest stable version
+      include_tasks: setup.yml
+      when: netdata_setup == "full" or netdata_setup == "install"
+
+    - name: install fping
+      include_tasks: fping_plugin_setup.yml
+      when: netdata_setup == "full" or netdata_setup == "install"
+
+    - name: configuration main
+      include_tasks: configuration_main.yml
+      when: netdata_setup == "full" or netdata_setup == "configure"
+
+    - name: configuration python.d and go.d plugins
+      include_tasks: plugin_installation.yml
+      when: netdata_setup == "full" or netdata_setup == "configure"
+  when: not ansible_check_mode

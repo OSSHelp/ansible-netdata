@@ -1,0 +1,36 @@
+---
+- name: Install Python2 packages
+  apt:
+    name: [python-psycopg2]
+    state: present
+    update_cache: yes
+    cache_valid_time: 86400
+  when: ansible_distribution_release in ['xenial', 'bionic']
+
+- name: Install Python3 packages
+  apt:
+    name: [python3-psycopg2]
+    state: present
+    update_cache: yes
+    cache_valid_time: 86400
+  when: ansible_distribution_release in ['focal']
+
+- name: Add Netdata PostgreSQL user
+  become: true
+  become_user: postgres
+  postgresql_user:
+    name: netdata
+    password: "{{ lookup('password', '/tmp/psqlpass length=16 chars=ascii_letters,digits') }}"
+    no_password_changes: yes
+    role_attr_flags: 'SUPERUSER'
+  register: created_postgresql_user
+  when: not netdata_force_all_plugins_installation and (ansible_virtualization_type != 'lxc' or netdata_force_create_db_user)
+
+- name: deploy postgres.conf in python.d  # noqa 503
+  template:
+    src: postgres.j2
+    dest: /etc/netdata/python.d/postgres.conf
+    group: netdata
+    mode: 0o640
+  notify: restart netdata service
+  when: created_postgresql_user.changed|default('false')

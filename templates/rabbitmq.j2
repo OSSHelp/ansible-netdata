@@ -1,0 +1,8 @@
+rabbitmq:
+ name: local
+ host: '127.0.0.1'
+ port: '15672'
+ user: 'netdata'
+ pass: '{{lookup('file', '/tmp/rabbitpass') }}'
+ retries: {{ plugin_retries }}
+ autodetection_retry: {{ plugin_autodetection_retry }}

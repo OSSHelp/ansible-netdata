@@ -1,0 +1,41 @@
+[global]
+        run as user = root
+        web files owner = root
+        web files group = netdata
+        hostname = {{ hostname }}
+        access log = none
+{% if ansible_virtualization_type == 'lxc' and not netdata_force_host_system %}
+        memory mode = none
+        history = 300
+{% else %}
+        memory mode = {{ netdata_memory_mode }}
+        page cache size = {{ netdata_page_cache_size }}
+{% if netdata_memory_mode == 'dbengine' %}
+        dbengine multihost disk space = {{ netdata_dbengine_multihost_disk_space }}
+{% endif %}
+{% if netdata_custom_params.global is defined and netdata_custom_params.global|length %}
+{% for param in netdata_custom_params.global %}
+{{ param.key | indent(8, True) }} = {{ param.value }}
+{% endfor %}
+{% endif %}
+{% endif %}
+[health]
+        enabled = no
+[statsd]
+        enabled = no
+{% if ansible_virtualization_type == 'lxc' and not netdata_force_host_system %}
+[plugins]
+        tc = no
+        idlejitter = no
+        proc = no
+        diskspace = no
+        cgroups = yes
+        checks = no
+        enable running new plugins = no
+        charts.d = no
+        fping = no
+        python.d = yes
+        apps = {{ 'yes' if netdata_enable_app_plugin_in_lxc else 'no' }}
+        node.d = no
+        nfacct = no
+{% endif %}

@@ -1,0 +1,4 @@
+---
+- name: deploy monit.conf in python.d
+  template: src=monit.j2 dest=/etc/netdata/python.d/monit.conf group=netdata mode=0o640
+  notify: restart netdata service

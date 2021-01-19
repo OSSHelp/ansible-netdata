@@ -1,0 +1,6 @@
+all_drives:
+  retries: {{ plugin_retries }}
+  autodetection_retry: {{ plugin_autodetection_retry }}
+{% if smartd_exclude_drives is not none %}
+  exclude_disks: '{{ smartd_exclude_drives }}'
+{%endif %}

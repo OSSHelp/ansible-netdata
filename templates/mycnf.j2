@@ -1,0 +1,6 @@
+[client]
+host=localhost
+user=netdata
+{% if not netdata_force_all_plugins_installation %}
+password={{lookup('file', '/tmp/my.cnf') }}
+{% endif %}

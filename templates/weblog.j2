@@ -1,0 +1,23 @@
+{% if web_log_params is mapping %}{{ web_log_params.name | replace(".", "_") }}:
+  name: '{{ web_log_params.name }}'
+  path: '{{ web_log_params.path }}'
+  histogram: [{{ web_log_params.histogram }}]
+  retries: {{ plugin_retries }}
+  autodetection_retry: {{ plugin_autodetection_retry }}
+  custom_log_format:
+    pattern: '{{ web_log_params.pattern }}'
+  categories:
+{% for category in web_log_categories %}
+    {{ category.key }}: '{{ category.value }}'
+{% endfor %}{% endif %}{% if web_log_params is iterable and web_log_params is not mapping %}{% for log_file in web_log_params %}{{ log_file.name | replace(".", "_") }}:
+  name: '{{ log_file.name }}'
+  path: '{{ log_file.path }}'
+  histogram: [{{ log_file.histogram | default('50,100,200,500,1000,2000,5000') }}]
+  retries: {{ plugin_retries }}
+  autodetection_retry: {{ plugin_autodetection_retry }}
+  custom_log_format:
+    pattern: '{{ log_file.pattern | default('(?P<address>[\da-f.:]+).*(?P<date>\[.+\])\s(?P<code>[1-9]\d{2})\s\".*\"\s\"(?P<method>[A-Z]+)\s(?P<url>.*?)\s.+\"\s(?P<bytes_sent>\d+)\s(?P<resp_time>\d+\.\d+)') }}'
+  categories:
+{% for category in log_file.categories | default(web_log_categories) %}
+    {{ category.key }}: '{{ category.value }}'
+{% endfor %}{% endfor %}{% endif %}

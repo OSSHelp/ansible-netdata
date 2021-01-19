@@ -1,0 +1,9 @@
+localhost:
+{% if not netdata_force_all_plugins_installation %}
+  user: '{{ haproxy_auth_user.stdout or 'user' }}'
+  pass: '{{ haproxy_auth_pass.stdout or 'Pa$$w0rd' }}'
+{% endif %}
+  name : 'local'
+  url  : '{{ haproxy_url }}'
+  retries: {{ plugin_retries }}
+  autodetection_retry: {{ plugin_autodetection_retry }}

@@ -1,0 +1,10 @@
+local:
+    name : 'local'
+    host : '127.0.0.1'
+    port : 27017
+{% if mongodb_auth_enabled.stdout|default('1') == "0" %}
+    user : 'netdata'
+    pass : '{{lookup('file', '/tmp/mongopass') }}'
+{% endif %}
+    retries: {{ plugin_retries }}
+    autodetection_retry: {{ plugin_autodetection_retry }}
