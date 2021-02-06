@@ -23,8 +23,9 @@
         enabled = no
 [statsd]
         enabled = no
-{% if ansible_virtualization_type == 'lxc' and not netdata_force_host_system %}
 [plugins]
+        go.d = {{ 'yes' if go_d_plugin_enabled else 'no' }}
+{% if ansible_virtualization_type == 'lxc' and not netdata_force_host_system %}
         tc = no
         idlejitter = no
         proc = no

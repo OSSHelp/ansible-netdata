@@ -57,7 +57,11 @@ netdata_apps_groups_conf_src:
   default: /usr/lib/x86_64-linux-gnu/netdata/conf.d/apps_groups.conf
   focal: /usr/lib/netdata/conf.d/apps_groups.conf
 
-### var for official last version
+## vars for go.d plugin configs
+
+go_d_plugin_enabled: false
+
+## vars for official last version
 
 # for reinstall or update
 force_install: false
