@@ -190,6 +190,7 @@ If `apikey` variable is empty (it is by default) the role will search for enviro
 
 - [Official documentation](https://learn.netdata.cloud/docs/agent)
 - [OSSHelp KB Articles](https://oss.help/kbg114)
+- [Collection of Grafana dashboards](https://grafana.com/orgs/osshelp)
 
 ## TODO
 
