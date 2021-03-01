@@ -151,7 +151,25 @@ You can calculate the required system resources using the [official calculator](
 
 Netdata can gather metrics from Prometheus endpoints and generate new charts with the same high-granularity, per-second frequency as you expect from other collectors. (Only xenial and bionic support in role) See [docs](https://learn.netdata.cloud/docs/agent/collectors/go.d.plugin/modules/prometheus) for more information.
 
-### Deploy example with node_exporter job and custom global params
+### Supported Prometheus-exporters
+
+Configuration for some exporters will be generated automatically if their service was detected:
+
+- dnsmasq-exporter
+- mongodb-exporter
+- mongodb-query-exporter
+- nginx-vts-exporter
+- node-exporter
+- proxysql-exporter
+- sql-exporter
+- sphinx-exporter
+- rabbitmq-exporter
+- redis-exporter
+- script-exporter (just metrics of exporter itself, you still need a custom job for your script execution)
+
+More acurate list see [here](netdata/templates/prometheus.j2). If you are using unsupported exporter - use `netdata_prometheus_jobs` to describe needed configuration manually. See example below.
+
+### Deploy example with blackbox-exporter job and custom global params
 
 ``` yaml
 - role: netdata
@@ -160,23 +178,13 @@ Netdata can gather metrics from Prometheus endpoints and generate new charts wit
     max_time_series: 2048
     update_every: 15
   netdata_prometheus_jobs:
-    - name: node_exporter_local
-      url: 'http://127.0.0.1:9100/metrics'
+    - name: blackbox_exporter_local
+      url: 'http://127.0.0.1:9110/metrics'
 ```
 
-### Collecting metrics from Dnsmasq-exporter
+### Metrics collection from script-exporter
 
-Port 9153/tcp, that is being used by dnsmasq-exporter, is already occupied by CoreDNS (see [Default port allocations](https://github.com/prometheus/prometheus/wiki/Default-port-allocations)) so default configuration won't fit. For metric collection you need to override the default job list with `netdata_prometheus_jobs`, e.g.:
-
-``` yaml
-  netdata_prometheus_jobs:
-    - name: dnsmasq_exporter_local
-      url: 'http://127.0.0.1:9153/metrics'
-```
-
-### Collectiong metrics from script-exporter
-
-For now only exporter's metrics will be collected with default configuration, so no scripts will be executed at all. You can try to prepare a suitable job, but make sure to set the appropriate `update_every` value or provide your script with metric-caching mechanisms.
+For now only exporter's metrics will be collected with default configuration, so no scripts will be executed at all. You need to prepare a suitable job with `netdata_prometheus_jobs`, make sure to set the appropriate `update_every` value or provide your script with metric-caching mechanisms.
 
 ## About the API key setting
 
@@ -194,7 +202,7 @@ If `apikey` variable is empty (it is by default) the role will search for enviro
 
 ## TODO
 
-- add check mode support
+- add ansible check mode support
 
 ## License
 

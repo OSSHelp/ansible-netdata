@@ -82,7 +82,7 @@ netdata_prometheus_params:
   autodetection_retry: 300
   max_time_series: 2048
   priority: 70000
-  update_every: 10
+  update_every: 15
 
 netdata_memory_mode: dbengine
 netdata_page_cache_size: 16
