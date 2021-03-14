@@ -1,7 +1,20 @@
 ---
+
+- name: add osshelp testing repository
+  include_tasks: osshelp_repo.yml
+  when: ansible_distribution_release == 'xenial'
+
 - name: Install fping package
-  apt: name=fping state=present update_cache=yes cache_valid_time=86400
+  apt:
+    name: fping
+    state: present
+    update_cache: yes
+    cache_valid_time: 86400
 
 - name: Deploy fping.conf in /etc/netdata
-  template: src=fping.j2 dest=/etc/netdata/fping.conf group=netdata mode=0o640
+  template:
+    src: fping.j2
+    dest: /etc/netdata/fping.conf
+    group: netdata
+    mode: 0640
   notify: restart netdata service

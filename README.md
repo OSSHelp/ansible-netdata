@@ -46,7 +46,7 @@ See detailed explanation about API key setting below.
 | `netdata_force_create_db_user` | `false` | Used for enable creating users in MySQL, PostreSQL, RabbitMQ, MongoDB |
 | `netdata_force_all_plugins_installation` | `false` | For role builds only! Using this parameter in production builds could cause unforeseen consequences. Forces role to configure all plugins, even if their services are missing |
 | `netdata_force_host_system` | `false` | For role builds only! Using this parameter in production builds could cause unforeseen consequences. Forces role to act like if being deployed to host system (even in lxc-containers) |
-| `go_d_plugin_enabled` | `false` | Whether to enable go.d plugin. Use with caution, make sure to override default jobs for prometheus endpoints collector. Can overuse CPU and RAM on versions older than v1.30.x, [details](https://github.com/netdata/go.d.plugin/issues/549) |
+| `go_d_plugin_enabled` | `false` | Whether to enable go.d plugin. Use with caution, make sure to override default jobs for prometheus endpoints collector. Can overuse CPU and RAM on versions older than v1.29.1, [details](https://github.com/netdata/go.d.plugin/issues/549) |
 
 ### Restart timeout control
 
