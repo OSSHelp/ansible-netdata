@@ -18,7 +18,7 @@
 - name: fail if not received valid API key
   assert:
     that:
-      - apikey | regex_search('^[A-Z0-9\\-]+(,[A-Z0-9\\-]+)*$') | string | length >= 36
+      - apikey | regex_search('^[a-zA-Z0-9\\-]+(,[a-zA-Z0-9\\-]+)*$') | string | length >= 36
 
 - name: generate netdata.conf
   template:
