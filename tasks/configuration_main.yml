@@ -4,7 +4,6 @@
     gather_subset: [virtual]
   when: ansible_virtualization_type is not defined
 
-
 - name: try to get API key from environment
   block:
     - name: look up for NETDATA_API_KEY in env
@@ -14,13 +13,12 @@
     - name: use API key fron env, if found a suitable one
       set_fact:
         apikey: "{{ netdata_api_key }}"
-      when: netdata_api_key | length == 36
   when: apikey | length == 0
 
 - name: fail if not received valid API key
   assert:
     that:
-      - apikey | length == 36
+      - apikey | regex_search('^[A-Z0-9\\-]+(,[A-Z0-9\\-]+)*$') | string | length >= 36
 
 - name: generate netdata.conf
   template:

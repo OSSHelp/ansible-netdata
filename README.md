@@ -190,6 +190,10 @@ For now only exporter's metrics will be collected with default configuration, so
 
 If `apikey` variable is empty (it is by default) the role will search for environment variable `NETDATA_API_KEY` and try to use it's value. `NETDATA_API_KEY` must be set in you test/build plugins' environment in your drone.yml from orgsecret `netdata_api_key` to be available for role. If by any means this is not possible - you can always override this behaviour by pinning `apikey` in role params, so `NETDATA_API_KEY` will be never checked.
 
+## Multiple API keys on host system
+
+To use multiple API keys in stream.conf on host system you must provide your keys separated by comma.
+
 ### Trick for role testing on workspace
 
 `NETDATA_API_KEY` is being passed to environment in provisioner section of molecule.yml where needed (non-configure scenarios). Without it builds with molecule will fail when executed on workspace.

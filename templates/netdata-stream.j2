@@ -1,8 +1,9 @@
+{% set apikey_list = apikey|replace(',', ' ') %}
 {% if ansible_virtualization_type == 'lxc' and not netdata_force_host_system %}
 [stream]
     enabled = yes
     destination = netdata-master
-    api key = {{ apikey }}
+    api key = {{ apikey_list.split()[0] }}
     timeout seconds = 60
     default port = 19999
     buffer size bytes = 1048576
@@ -10,9 +11,11 @@
     initial clock resync iterations = 60
 {% endif %}
 {% if ansible_virtualization_type != 'lxc' or netdata_force_host_system %}
+{% for apikey in apikey_list.split() %}
 [{{ apikey }}]
     enabled = yes
     default history = 3600
     default memory = ram
     health enabled by default = no
+{% endfor %}
 {% endif %}
