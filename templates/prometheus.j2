@@ -8,6 +8,9 @@ jobs:
 {% if 'node_exporter' in service_list %}
   - name: node_exporter_local
     url: 'http://127.0.0.1:9100/metrics'
+{% endif %}{% if 'consul_exporter' in service_list %}
+  - name: consul_exporter_local
+    url: 'http://127.0.0.1:9107/metrics'
 {% endif %}{% if 'redis_exporter' in service_list %}
   - name: redis_exporter_local
     url: 'http://127.0.0.1:9121/metrics'
