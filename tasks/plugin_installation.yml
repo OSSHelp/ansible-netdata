@@ -72,3 +72,7 @@
 - name: configuration go.d plugin for prometheus
   include_tasks: prometheus_plugin_setup.yml
   when: ansible_distribution_release != 'focal'
+
+- name: configuration go.d plugin for weblog
+  include_tasks: go_d_weblog_plugin_setup.yml
+  when: netdata_go_d_web_log_plugin_enabled

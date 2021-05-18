@@ -9,7 +9,7 @@ The role installs Netdata and setups it configuration.
 ```yaml
   roles:
     - role: netdata
-      web_lob_plugin_enabled: false
+      netdata_python_web_lob_plugin_enabled: false
 ```
 
 Make sure that you call this role **before** the [monit](https://gitea.osshelp.ru/ansible/monit) role, if used together. Otherwise netdata presence will not be automatically detected and Monit cfg generation for it will be skipped.
@@ -46,7 +46,7 @@ See detailed explanation about API key setting below.
 | `netdata_force_create_db_user` | `false` | Used for enable creating users in MySQL, PostreSQL, RabbitMQ, MongoDB |
 | `netdata_force_all_plugins_installation` | `false` | For role builds only! Using this parameter in production builds could cause unforeseen consequences. Forces role to configure all plugins, even if their services are missing |
 | `netdata_force_host_system` | `false` | For role builds only! Using this parameter in production builds could cause unforeseen consequences. Forces role to act like if being deployed to host system (even in lxc-containers) |
-| `go_d_plugin_enabled` | `false` | Whether to enable go.d plugin. Use with caution, make sure to override default jobs for prometheus endpoints collector. Can overuse CPU and RAM on versions older than v1.29.1, [details](https://github.com/netdata/go.d.plugin/issues/549) |
+| `netdata_go_d_plugin_enabled` | `false` | Whether to enable go.d plugin. Use with caution, make sure to override default jobs for prometheus endpoints collector. Can overuse CPU and RAM on versions older than v1.29.1, [details](https://github.com/netdata/go.d.plugin/issues/549) |
 
 ### Restart timeout control
 
@@ -69,7 +69,7 @@ The automatic generation can be disabled entirely by switching `netdata_dynamic_
   roles:
     - role: netdata:
       force_monit_plugin_installation: true
-      web_lob_plugin_enabled: true
+      netdata_python_web_log_plugin_enabled: true
       plugin_retries: 300
       plugin_autodetection_retry: 300
       mysql_socket_path: '/var/run/mysqld/mysqld.sock'
@@ -93,12 +93,12 @@ The automatic generation can be disabled entirely by switching `netdata_dynamic_
         - prod
         - dev
       general_fpm_url_part: 'http://localhost/fpm-status'
-      web_log_params:
+      netdata_python_web_log_params:
         name: 'example.com'
         path: '/var/log/nginx/access.log'
         histogram: '50,100,200,500,1000,2000,5000'
         pattern: '(?P<address>[\da-f.:]+).*(?P<date>\[.+\])\s(?P<code>[1-9]\d{2})\s\".*\"\s\"(?P<method>[A-Z]+)\s(?P<url>.*?)\s.+\"\s(?P<  bytes_sent>\d+)\s(?P<resp_time>\d+\.\d+)'
-      web_log_categories:
+      netdata_python_web_log_categories:
         - { key: main, value: '^/$' }
         - { key: admin, value: '^/(\w{2}\/)?admin/' }
 ```
@@ -107,7 +107,7 @@ The automatic generation can be disabled entirely by switching `netdata_dynamic_
 
 ``` yaml
 - role: netdata
-  web_log_params:
+  netdata_python_web_log_params:
     - name: logfile1
       path: '/var/log/nginx/logfile1.log'
       histogram: '50,100,200,500,1000,2000,5000'
@@ -128,6 +128,47 @@ Defaults:
 
 - histogram. `50,100,200,500,1000,2000,5000`
 - pattern. `(?P<address>[\da-f.:]+).*(?P<date>\[.+\])\s(?P<code>[1-9]\d{2})\s\".*\"\s\"(?P<method>[A-Z]+)\s(?P<url>.*?)\s.+\"\s(?P<bytes_sent>\d+)\s(?P<resp_time>\d+\.\d+)`
+
+## Deploy example with go.d weblog
+
+``` yaml
+- role: netdata
+  netdata_go_d_plugin_enabled: true
+  netdata_go_d_web_log_plugin_enabled: true
+  netdata_go_d_web_log_params:
+    name: 'example.com'
+    path: '/var/log/nginx/access.log'
+    group_response_codes: 'no'
+    log_type: csv
+    histogram: '.05, .1, .20, .5, 1, 2, 5'
+    log_config_params:
+      format: '$remote_addr $geoip2_data_country_code $remote_user $host [$time_local] "$request" $status $upstream_status $upstream_cache_status $request_time $upstream_response_time $request_length $body_bytes_sent $ssl_protocol $ssl_cipher "$http_referer" "$http_user_agent" $connection/$connection_requests'
+  netdata_go_d_web_log_url_patterns:
+    - name: root
+      match: '~ ^/$'
+    - name: other
+      match: '* *'
+  netdata_go_d_web_log_user_agents:
+    - name: monitoring
+      match: '~ (BlackboxExporter|Pingdom)'
+    - name: chrome
+      match: '~ Chrome'
+    - name: firefox
+      match: '~ Firefox'
+    - name: bots
+      match: '~ (Bot|bot)'
+    - name: other
+      match: '* *'
+  netdata_go_d_web_log_custom_fields:
+    - name: '^FB'
+      histogram: [ .005, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10 ]
+    - name: http_referer
+      patterns:
+        - name: cacti
+          match: '~ cacti'
+        - name: observium
+          match: '~ observium'
+```
 
 ## Deploy example with custom general params
 

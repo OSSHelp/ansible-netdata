@@ -1,0 +1,32 @@
+jobs:
+{% if netdata_go_d_web_log_params is mapping %}
+  - name: '{{ netdata_go_d_web_log_params.name }}'
+    path: '{{ netdata_go_d_web_log_params.path }}'
+    group_response_codes: '{{ netdata_go_d_web_log_params.group_response_codes }}'
+    log_type: {{ netdata_go_d_web_log_params.log_type }}
+    histogram: [{{ netdata_go_d_web_log_params.histogram }}]
+    {{ netdata_go_d_web_log_params.log_type }}_config:
+{% for key, value in netdata_go_d_web_log_params.log_config_params.items() %}
+      {{ key }}: '{{ value }}'
+{% endfor %}
+    url_patterns:
+{% for pattern in netdata_go_d_web_log_url_patterns %}
+      - name: {{ pattern.name }}
+        match: '{{ pattern.match }}'
+{% endfor %}
+    custom_fields:
+      - name: http_user_agent
+        pattterns:
+{% for pattern in netdata_go_d_web_log_user_agents %}
+          - name: {{ pattern.name }}
+            match: '{{ pattern.match }}'
+{% endfor %}
+      - name: geoip2_data_country_code
+        patterns:
+{% for code in netdata_go_d_web_log_country_codes %}{% for key, value in code.items() %}
+          - name: {{ key }}
+            match: '= {{ value }}'
+{% endfor %}{% endfor %}
+          - name: Unknown
+            match: '* *'
+{% endif %}

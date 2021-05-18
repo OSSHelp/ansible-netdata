@@ -13,8 +13,9 @@ netdata_dynamic_stop_timeout: true
 
 ## vars for python.d plugin configs
 
+netdata_python_d_plugin_enabled: yes
 force_monit_plugin_installation: true
-web_lob_plugin_enabled: true
+netdata_python_web_lob_plugin_enabled: true
 
 plugin_retries: 300
 plugin_autodetection_retry: 300
@@ -43,13 +44,13 @@ phpfpm_pools:
   - www
 general_fpm_url_part: 'http://localhost/fpm-status'
 
-web_log_params:
+netdata_python_web_log_params:
   name: 'example.com'
   path: '/var/log/nginx/access.log'
   histogram: '50,100,200,500,1000,2000,5000'
   pattern: '(?P<address>[\da-f.:]+).*(?P<date>\[.+\])\s(?P<code>[1-9]\d{2})\s\".*\"\s\"(?P<method>[A-Z]+)\s(?P<url>.*?)\s.+\"\s(?P<bytes_sent>\d+)\s(?P<resp_time>\d+\.\d+)'
 
-web_log_categories:
+netdata_python_web_log_categories:
   - { key: main, value: '^/$' }
   - { key: admin, value: '^/(\w{2}\/)?admin/' }
 
@@ -59,8 +60,46 @@ netdata_apps_groups_conf_src:
 
 ## vars for go.d plugin configs
 
-go_d_plugin_enabled: false
+netdata_go_d_plugin_enabled: false
 
+netdata_go_d_web_log_plugin_enabled: false
+netdata_go_d_web_log_params:
+  name: 'example.com'
+  path: '/var/log/nginx/access.log'
+  group_response_codes: 'no'
+  log_type: csv
+  histogram: '.05, .1, .20, .5, 1, 2, 5'
+  log_config_params:
+    format: '$remote_addr $geoip2_data_country_code $remote_user $host [$time_local] "$request" $status $upstream_status $upstream_cache_status $request_time $upstream_response_time $request_length $body_bytes_sent $ssl_protocol $ssl_cipher "$http_referer" "$http_user_agent" $connection/$connection_requests'
+
+netdata_go_d_web_log_url_patterns:
+  - name: root
+    match: '~ ^/$'
+  - name: other
+    match: '* *'
+
+netdata_go_d_web_log_country_codes: [AF: AF, AX: AX, AL: AL, DZ: DZ, AS: AS, AD: AD, AO: AO, AI: AI, AQ: AQ, AG: AG, AR: AR, AM: AM, AW: AW, AU: AU, AT: AT, AZ: AZ, BS: BS, BH: BH, BD: BD, BB: BB, BY: BY, BE: BE, BZ: BZ, BJ: BJ, BM: BM, BT: BT, BO: BO, BQ: BQ, BA: BA, BW: BW, BV: BV, BR: BR, IO: IO, BN: BN, BG: BG, BF: BF, BI: BI, KH: KH, CM: CM, CA: CA, CV: CV, KY: KY, CF: CF, TD: TD, CL: CL, CN: CN, CX: CX, CC: CC, CO: CO, KM: KM, CG: CG, CD: CD, CK: CK, CR: CR, CI: CI, HR: HR, CU: CU, CW: CW, CY: CY, CZ: CZ, DK: DK, DJ: DJ, DM: DM, DO: DO, EC: EC, EG: EG, SV: SV, GQ: GQ, ER: ER, EE: EE, ET: ET, FK: FK, FO: FO, FJ: FJ, FI: FI, FR: FR, GF: GF, PF: PF, TF: TF, GA: GA, GM: GM, GE: GE, DE: DE, GH: GH, GI: GI, GR: GR, GL: GL, GD: GD, GP: GP, GU: GU, GT: GT, GG: GG, GN: GN, GW: GW, GY: GY, HT: HT, HM: HM, VA: VA, HN: HN, HK: HK, HU: HU, IS: IS, IN: IN, ID: ID, IR: IR, IQ: IQ, IE: IE, IM: IM, IL: IL, IT: IT, JM: JM, JP: JP, JE: JE, JO: JO, KZ: KZ, KE: KE, KI: KI, KP: KP, KR: KR, KW: KW, KG: KG, LA: LA, LV: LV, LB: LB, LS: LS, LR: LR, LY: LY, LI: LI, LT: LT, LU: LU, MO: MO, MK: MK, MG: MG, MW: MW, MY: MY, MV: MV, ML: ML, MT: MT, MH: MH, MQ: MQ, MR: MR, MU: MU, YT: YT, MX: MX, FM: FM, MD: MD, MC: MC, MN: MN, ME: ME, MS: MS, MA: MA, MZ: MZ, MM: MM, NA: NA, NR: NR, NP: NP, NL: NL, NC: NC, NZ: NZ, NI: NI, NE: NE, NG: NG, NU: NU, NF: NF, MP: MP, 'NO': 'NO', OM: OM, PK: PK, PW: PW, PS: PS, PA: PA, PG: PG, PY: PY, PE: PE, PH: PH, PN: PN, PL: PL, PT: PT, PR: PR, QA: QA, RE: RE, RO: RO, RU: RU, RW: RW, BL: BL, SH: SH, KN: KN, LC: LC, MF: MF, PM: PM, VC: VC, WS: WS, SM: SM, ST: ST, SA: SA, SN: SN, RS: RS, SC: SC, SL: SL, SG: SG, SX: SX, SK: SK, SI: SI, SB: SB, SO: SO, ZA: ZA, GS: GS, SS: SS, ES: ES, LK: LK, SD: SD, SR: SR, SJ: SJ, SZ: SZ, SE: SE, CH: CH, SY: SY, TW: TW, TJ: TJ, TZ: TZ, TH: TH, TL: TL, TG: TG, TK: TK, TO: TO, TT: TT, TN: TN, TR: TR, TM: TM, TC: TC, TV: TV, UG: UG, UA: UA, AE: AE, GB: GB, US: US, UM: UM, UY: UY, UZ: UZ, VU: VU, VE: VE, VN: VN, VG: VG, VI: VI, WF: WF, EH: EH, YE: YE, ZM: ZM, ZW: ZW]
+netdata_go_d_web_log_user_agents:
+  - name: monitoring
+    match: '~ (BlackboxExporter|Pingdom)'
+  - name: chrome
+    match: '~ Chrome'
+  - name: firefox
+    match: '~ Firefox'
+  - name: bots
+    match: '~ (Bot|bot)'
+  - name: other
+    match: '* *'
+
+netdata_go_d_web_log_custom_fields:
+  - name: '^FB'
+    histogram: [ .005, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10 ]
+  - name: http_referer
+    patterns:
+      - name: cacti
+        match: '~ cacti'
+      - name: observium
+        match: '~ observium'
 ## vars for official last version
 
 # for reinstall or update
