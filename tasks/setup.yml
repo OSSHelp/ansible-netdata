@@ -32,20 +32,6 @@
   notify: restart netdata service
   when: physical
 
-- name: enable systemd accounting by default
-  lineinfile:
-    dest: /etc/systemd/system.conf
-    regexp: "#?{{ item }}="
-    line: "{{ item }}=yes"
-  with_items:
-    - DefaultCPUAccounting
-    - DefaultBlockIOAccounting
-    - DefaultMemoryAccounting
-  notify:
-    - restart netdata service
-    - enable cgroups accounting
-  when: ansible_virtualization_type != 'lxc'
-
 - name: add pgp key
   apt_key:
     url: "https://packagecloud.io/netdata/netdata/gpgkey"
