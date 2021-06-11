@@ -2,15 +2,16 @@ jobs:
 {% if netdata_go_d_web_log_params is mapping %}
   - name: '{{ netdata_go_d_web_log_params.name }}'
     path: '{{ netdata_go_d_web_log_params.path }}'
-    group_response_codes: '{{ netdata_go_d_web_log_params.group_response_codes }}'
-    log_type: {{ netdata_go_d_web_log_params.log_type }}
-    histogram: [{{ netdata_go_d_web_log_params.histogram }}]
-    {{ netdata_go_d_web_log_params.log_type }}_config:
+    group_response_codes: {{ netdata_go_d_web_log_params.group_response_codes | default('no') }}
+    log_type: {{ netdata_go_d_web_log_params.log_type | default('csv') }}
+    histogram: [{{ netdata_go_d_web_log_params.histogram | default('.05, .1, .20, .5, 1, 2, 5') }}]
+{% if netdata_go_d_web_log_params.log_config_params is defined %}
+    {{ netdata_go_d_web_log_params.log_type | default('csv') }}_config:
 {% for key, value in netdata_go_d_web_log_params.log_config_params.items() %}
       {{ key }}: '{{ value }}'
-{% endfor %}
+{% endfor %}{% endif %}
     url_patterns:
-{% for pattern in netdata_go_d_web_log_url_patterns %}
+{% for pattern in netdata_go_d_web_log_params.url_patterns | default(netdata_go_d_web_log_url_patterns) %}
       - name: {{ pattern.name }}
         match: '{{ pattern.match }}'
 {% endfor %}
@@ -29,4 +30,35 @@ jobs:
 {% endfor %}{% endfor %}
           - name: Unknown
             match: '* *'
-{% endif %}
+{% endif %}{% if netdata_go_d_web_log_params is iterable and netdata_go_d_web_log_params is not mapping %}{% for log_file in netdata_go_d_web_log_params %}
+  - name: '{{ log_file.name }}'
+    path: '{{ log_file.path }}'
+    group_response_codes: {{ log_file.group_response_codes | default('no')}}
+    log_type: {{ log_file.log_type | default('csv') }}
+    histogram: [{{ log_file.histogram | default('.05, .1, .20, .5, 1, 2, 5') }}]
+{% if log_file.log_config_params is defined %}
+    {{ log_file.log_type | default('csv') }}_config:
+{% for key, value in log_file.log_config_params.items() %}
+      {{ key }}: '{{ value }}'
+{% endfor %}{% endif %}
+    url_patterns:
+{% for pattern in log_file.url_patterns | default(netdata_go_d_web_log_url_patterns) %}
+      - name: {{ pattern.name }}
+        match: '{{ pattern.match }}'
+{% endfor %}
+    custom_fields:
+      - name: http_user_agent
+        pattterns:
+{% for pattern in netdata_go_d_web_log_user_agents %}
+          - name: {{ pattern.name }}
+            match: '{{ pattern.match }}'
+{% endfor %}
+      - name: geoip2_data_country_code
+        patterns:
+{% for code in netdata_go_d_web_log_country_codes %}{% for key, value in code.items() %}
+          - name: {{ key }}
+            match: '= {{ value }}'
+{% endfor %}{% endfor %}
+          - name: Unknown
+            match: '* *'
+{% endfor %}{% endif %}

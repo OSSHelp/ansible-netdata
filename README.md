@@ -136,38 +136,19 @@ Defaults:
   netdata_go_d_plugin_enabled: true
   netdata_go_d_web_log_plugin_enabled: true
   netdata_go_d_web_log_params:
-    name: 'example.com'
-    path: '/var/log/nginx/access.log'
-    group_response_codes: 'no'
-    log_type: csv
-    histogram: '.05, .1, .20, .5, 1, 2, 5'
-    log_config_params:
-      format: '$remote_addr $geoip2_data_country_code $remote_user $host [$time_local] "$request" $status $upstream_status $upstream_cache_status $request_time $upstream_response_time $request_length $body_bytes_sent $ssl_protocol $ssl_cipher "$http_referer" "$http_user_agent" $connection/$connection_requests'
-  netdata_go_d_web_log_url_patterns:
-    - name: root
-      match: '~ ^/$'
-    - name: other
-      match: '* *'
-  netdata_go_d_web_log_user_agents:
-    - name: monitoring
-      match: '~ (BlackboxExporter|Pingdom)'
-    - name: chrome
-      match: '~ Chrome'
-    - name: firefox
-      match: '~ Firefox'
-    - name: bots
-      match: '~ (Bot|bot)'
-    - name: other
-      match: '* *'
-  netdata_go_d_web_log_custom_fields:
-    - name: '^FB'
-      histogram: [ .005, .01, .025, .05, .1, .25, .5, 1, 2.5, 5, 10 ]
-    - name: http_referer
-      patterns:
-        - name: cacti
-          match: '~ cacti'
-        - name: observium
-          match: '~ observium'
+    - name: 'example.com'
+      path: '/var/log/nginx/access.log'
+      group_response_codes: 'no'
+      log_type: csv
+      histogram: '.05, .1, .20, .5, 1, 2, 5'
+      log_config_params:
+        format: '$remote_addr $geoip2_data_country_code $remote_user $host [$time_local] "$request" $status $upstream_status $upstream_cache_status $request_time $upstream_response_time $request_length $body_bytes_sent $ssl_protocol $ssl_cipher "$http_referer" "$http_user_agent" $connection/$connection_requests'
+      url_patterns:
+        - { name: main, match: '~ ^/$' }
+        - { name: custom, match: '~ ^/custom' }
+        - { name: other, match: '* *' }
+    - name: 'example2.com'
+      path: '/var/log/nginx/access2.log'
 ```
 
 ## Deploy example with custom general params
