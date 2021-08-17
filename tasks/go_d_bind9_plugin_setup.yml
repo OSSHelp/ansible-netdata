@@ -1,0 +1,8 @@
+---
+- name: generate bind.conf in /etc/netdata/go.d
+  template:
+    src: go_d_bind9.j2
+    dest: /etc/netdata/go.d/bind.conf
+    group: netdata
+    mode: 0640
+  notify: restart netdata service

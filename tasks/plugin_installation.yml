@@ -62,7 +62,10 @@
   when: "'tomcat' in service_list or netdata_force_all_plugins_installation"
 
 - name: configure python.d plugin for bind9
-  include_tasks: bind9_plugin_setup.yml
+  include_tasks: "{{ item }}"
+  loop:
+    - bind9_plugin_setup.yml
+    - go_d_bind9_plugin_setup.yml
   when: "'bind9' in service_list or netdata_force_all_plugins_installation"
 
 - name: configure python.d plugin for memcached
