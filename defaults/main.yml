@@ -60,7 +60,7 @@ netdata_apps_groups_conf_src:
 
 ## vars for go.d plugin configs
 
-netdata_go_d_plugin_enabled: false
+netdata_go_d_plugin_enabled: true
 
 netdata_go_d_web_log_plugin_enabled: false
 netdata_go_d_web_log_params:
@@ -100,6 +100,9 @@ netdata_go_d_web_log_custom_fields:
         match: '~ cacti'
       - name: observium
         match: '~ observium'
+
+netdata_bind9_plugin_version: go.d
+
 ## vars for official last version
 
 # for reinstall or update
