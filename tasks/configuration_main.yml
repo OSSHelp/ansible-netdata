@@ -31,3 +31,35 @@
     src: netdata-stream.j2
     dest: /etc/netdata/stream.conf
   notify: restart netdata service
+
+- name: generate health_alarm_notify.conf
+  template:
+    src: health_alarm_notify.j2
+    dest: /etc/netdata/health_alarm_notify.conf
+  notify: restart netdata service
+
+- name: check if groups cfg exists
+  stat:
+    path: /etc/netdata/apps_groups.conf
+  register: groups_cfg
+
+- name: copy apps_groups.conf
+  copy:
+    remote_src: true
+    src: /usr/lib/netdata/conf.d/apps_groups.conf
+    dest: /etc/netdata/apps_groups.conf
+    owner: root
+    group: root
+    mode: 0644
+  when: not groups_cfg.stat.exists
+  notify: restart netdata service
+
+- name: manage apps_groups.conf
+  lineinfile:
+    path: /etc/netdata/apps_groups.conf
+    state: "{{ item.state|default('present') }}"
+    regexp: "{{ item.regex }}"
+    line: "{{ item.line|default('') }}"
+    insertafter: "# NETDATA processes accounting"
+  loop: "{{ netdata_default_apps_groups + netdata_custom_apps_groups }}"
+  notify: restart netdata service

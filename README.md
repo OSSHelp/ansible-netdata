@@ -48,6 +48,8 @@ See detailed explanation about API key setting below.
 | `netdata_force_host_system` | `false` | For role builds only! Using this parameter in production builds could cause unforeseen consequences. Forces role to act like if being deployed to host system (even in lxc-containers) |
 | `netdata_go_d_plugin_enabled` | `true` | Whether to enable go.d plugin. Use with caution, make sure to override default jobs for prometheus endpoints collector. Can overuse CPU and RAM on versions older than v1.29.1, [details](https://github.com/netdata/go.d.plugin/issues/549) |
 | `netdata_bind9_plugin_version` | `go.d` | Plugin version for bind9 (go.d or python.d) |
+| `netdata_custom_plugin_params` | `[]` | For describing custom plugins params (see below) |
+| `netdata_custom_apps_groups` | `[]` | List for describing custom process groups for `/etc/netdata/apps_groups.conf` (see below) |
 
 ### Restart timeout control
 
@@ -129,6 +131,54 @@ Defaults:
 
 - histogram. `50,100,200,500,1000,2000,5000`
 - pattern. `(?P<address>[\da-f.:]+).*(?P<date>\[.+\])\s(?P<code>[1-9]\d{2})\s\".*\"\s\"(?P<method>[A-Z]+)\s(?P<url>.*?)\s.+\"\s(?P<bytes_sent>\d+)\s(?P<resp_time>\d+\.\d+)`
+
+## Setting custom plugins params
+
+Is performed via `netdata_custom_plugin_params` option. For example, this params for role:
+
+``` yaml
+      netdata_custom_plugin_params:
+        - name: proc:diskspace
+          params:
+            - param: exclude space metrics on paths
+              value: /proc/* /sys/* /var/run/user/* /run/user/* /snap/* /var/lib/docker/* /mnt* /var/lib*
+            - param: check for new mount points every
+              value: 20
+        - name: proc:/proc/diskstats:sda
+          params:
+            - param: bandwidth
+              value: auto
+            - param: i/o time
+              value: auto
+```
+
+will result in such lines in `netdata.conf`:
+
+``` plaintext
+[plugin:proc:diskspace]
+        exclude space metrics on paths = /proc/* /sys/* /var/run/user/* /run/user/* /snap/* /var/lib/docker/* /mnt* /var/lib*
+        check for new mount points every = 20
+[plugin:proc:/proc/diskstats:sda]
+        bandwidth = auto
+        i/o time = auto
+```
+
+## Describing custom groups for apps_groups.conf
+
+Is performed via `netdata_custom_apps_groups` list. For example, this params for role:
+
+``` yaml
+      netdata_custom_apps_groups:
+        - { regex: "^somegroup:", line: "somegroup: someprocess*" }
+        - { regex: "^anothergroup:", line: "anothergroup: anotherprocess*" }
+```
+
+will result in such lines in `apps_groups.conf`:
+
+``` plaintext
+somegroup: someprocess*
+anothergroup: anotherprocess*
+```
 
 ## Deploy example with go.d weblog
 

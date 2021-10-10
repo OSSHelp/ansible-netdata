@@ -40,3 +40,11 @@
         node.d = no
         nfacct = no
 {% endif %}
+{% if netdata_custom_plugin_params is defined and netdata_custom_plugin_params|length %}
+{% for plugin in netdata_custom_plugin_params %}
+[plugin:{{ plugin.name }}]
+{% for item in plugin.params %}
+{{ item.param|indent(8, True) }} = {{ item.value }}
+{% endfor %}
+{% endfor %}
+{% endif %}

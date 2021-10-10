@@ -44,6 +44,23 @@ phpfpm_pools:
   - www
 general_fpm_url_part: 'http://localhost/fpm-status'
 
+netdata_default_apps_groups:
+  - { regex: "^nodejs:", line: "nodejs: node nodejs" }
+  - { regex: "^php-fpm:", line: "php-fpm: php5-fpm php7-fpm php-fpm*" }
+  - { regex: "^php:", line: "php: php* php5" }
+  - { regex: "^memcached:", line: "memcached: memcached" }
+  - { regex: "^redis:", line: "redis: redis-server" }
+  - { regex: "^nginx:", line: "nginx: nginx*" }
+  - { regex: "^httpd:", line: "httpd: apache* httpd lighttpd" }
+  - { regex: "^backup:", line: "backup: custom.backup* v-backup-users v-delete-user-backup* pbackup bacula*" }
+  - { regex: "^minio:", line: "minio: minio*" }
+  - { regex: "^consul:", line: "consul: consul*" }
+  - { regex: "^lxd:", line: "lxd: lxd*" }
+  - { regex: "^atop:", line: "atop: atop*" }
+  - { regex: "^bash:", line: "bash: bash*" }
+
+netdata_custom_apps_groups: []
+
 netdata_python_web_log_params:
   name: 'example.com'
   path: '/var/log/nginx/access.log'
@@ -119,6 +136,8 @@ netdata_bind9_params:
   named_stats_path: /var/log/named/named.stats
 
 netdata_enable_app_plugin_in_lxc: false
+
+netdata_custom_plugin_params: []
 
 netdata_prometheus_params:
   autodetection_retry: 300
