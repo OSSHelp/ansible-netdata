@@ -24,21 +24,22 @@
 [statsd]
         enabled = no
 [plugins]
-        go.d = {{ 'yes' if netdata_go_d_plugin_enabled else 'no' }}
+{% if netdata_plugins_default is defined and netdata_plugins_default|length %}
+{% for key, value in netdata_plugins_default.items() %}
+{{ key|indent(8, True) }} = {{ value }}
+{% endfor %}
+{% endif %}
 {% if ansible_virtualization_type == 'lxc' and not netdata_force_host_system %}
-        tc = no
-        idlejitter = no
-        proc = no
-        diskspace = no
-        cgroups = yes
-        checks = no
-        enable running new plugins = no
-        charts.d = no
-        fping = no
-        python.d = {{ 'yes' if netdata_python_d_plugin_enabled else 'no' }}
-        apps = {{ 'yes' if netdata_enable_app_plugin_in_lxc else 'no' }}
-        node.d = no
-        nfacct = no
+{% if netdata_plugins_lxc is defined and netdata_plugins_lxc|length %}
+{% for key, value in netdata_plugins_lxc.items() %}
+{{ key|indent(8, True) }} = {{ value }}
+{% endfor %}
+{% endif %}
+{% endif %}
+{% if netdata_plugins is defined and netdata_plugins|length %}
+{% for key, value in netdata_plugins.items() %}
+{{ key|indent(8, True) }} = {{ value }}
+{% endfor %}
 {% endif %}
 {% if netdata_custom_plugin_params is defined and netdata_custom_plugin_params|length %}
 {% for plugin in netdata_custom_plugin_params %}

@@ -50,6 +50,7 @@ See detailed explanation about API key setting below.
 | `netdata_bind9_plugin_version` | `go.d` | Plugin version for bind9 (go.d or python.d) |
 | `netdata_custom_plugin_params` | `[]` | For describing custom plugins params (see below) |
 | `netdata_custom_apps_groups` | `[]` | List for describing custom process groups for `/etc/netdata/apps_groups.conf` (see below) |
+| `netdata_plugins` | `[]` | List for enabling and disabling plugins. |
 
 ### Restart timeout control
 
@@ -73,6 +74,8 @@ The automatic generation can be disabled entirely by switching `netdata_dynamic_
     - role: netdata:
       force_monit_plugin_installation: true
       netdata_python_web_log_plugin_enabled: true
+      netdata_plugins:
+        ebpf: 'no'
       plugin_retries: 300
       plugin_autodetection_retry: 300
       mysql_socket_path: '/var/run/mysqld/mysqld.sock'

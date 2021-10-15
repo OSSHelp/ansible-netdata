@@ -75,6 +75,26 @@ netdata_apps_groups_conf_src:
   default: /usr/lib/x86_64-linux-gnu/netdata/conf.d/apps_groups.conf
   focal: /usr/lib/netdata/conf.d/apps_groups.conf
 
+netdata_plugins_default:
+  go.d: "{{ 'yes' if netdata_go_d_plugin_enabled else 'no' }}"
+
+netdata_plugins_lxc:
+  tc: 'no'
+  idlejitter: 'no'
+  proc: 'no'
+  diskspace: 'no'
+  cgroups: 'yes'
+  checks: 'no'
+  enable running new plugins: 'no'
+  charts.d: 'no'
+  fping: 'no'
+  python.d: "{{ 'yes' if netdata_python_d_plugin_enabled else 'no' }}"
+  apps: "{{ 'yes' if netdata_enable_app_plugin_in_lxc else 'no' }}"
+  node.d: 'no'
+  nfacct: 'no'
+
+netdata_plugins: []
+
 ## vars for go.d plugin configs
 
 netdata_go_d_plugin_enabled: true
