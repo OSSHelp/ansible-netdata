@@ -1,8 +1,15 @@
 ---
 - name: generate bind.conf in /etc/netdata/go.d
-  template:
-    src: go_d_bind9.j2
-    dest: /etc/netdata/go.d/bind.conf
-    group: netdata
-    mode: 0640
-  notify: restart netdata service
+  block:
+    - name: ensure that netdata/go.d directory exists
+      file:
+        path: /etc/netdata/go.d
+        state: directory
+        mode: 0755
+    - name: generate go.d/bind.conf
+      template:
+        src: go_d_bind9.j2
+        dest: /etc/netdata/go.d/bind.conf
+        group: netdata
+        mode: 0640
+      notify: restart netdata service

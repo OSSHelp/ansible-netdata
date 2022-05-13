@@ -1,8 +1,15 @@
 ---
 - name: deploy web_log.conf in go.d
-  template:
-    src: go_d_weblog.j2
-    dest: /etc/netdata/go.d/web_log.conf
-    group: netdata
-    mode: 0640
-  notify: restart netdata service
+  block:
+    - name: ensure that netdata/go.d directory exists
+      file:
+        path: /etc/netdata/go.d
+        state: directory
+        mode: 0755
+    - name: deploy go.d/web_log.conf
+      template:
+        src: go_d_weblog.j2
+        dest: /etc/netdata/go.d/web_log.conf
+        group: netdata
+        mode: 0640
+      notify: restart netdata service
