@@ -1,6 +1,6 @@
 # Netdata
 
-[![Build Status](https://drone.osshelp.ru/api/badges/ansible/netdata/status.svg)](https://drone.osshelp.ru/ansible/netdata)
+[![Build Status](https://drone.osshelp.io/api/badges/ansible/netdata/status.svg)](https://drone.osshelp.ru/ansible/netdata)
 
 The role installs Netdata and setups it configuration.
 
@@ -12,7 +12,7 @@ The role installs Netdata and setups it configuration.
       netdata_python_web_lob_plugin_enabled: false
 ```
 
-Make sure that you call this role **before** the [monit](https://gitea.osshelp.ru/ansible/monit) role, if used together. Otherwise netdata presence will not be automatically detected and Monit cfg generation for it will be skipped.
+Make sure that you call this role **before** the [monit](https://gitea.osshelp.io/ansible/monit) role, if used together. Otherwise netdata presence will not be automatically detected and Monit cfg generation for it will be skipped.
 
 ## Configure only
 
