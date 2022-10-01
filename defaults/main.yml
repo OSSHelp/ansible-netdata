@@ -61,6 +61,8 @@ netdata_default_apps_groups:
   - { regex: "^lxd:", line: "lxd: lxd*" }
   - { regex: "^atop:", line: "atop: atop*" }
   - { regex: "^bash:", line: "bash: bash*" }
+  - { regex: "^promtail:", line: "promtail: *promtail*" }
+  - { regex: "^loki:", line: "loki: *loki*" }
 
 netdata_custom_apps_groups: []
 
