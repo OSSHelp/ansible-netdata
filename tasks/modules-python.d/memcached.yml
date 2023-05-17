@@ -1,7 +1,8 @@
 ---
-- name: deploy memcached.conf in python.d
+
+- name: generate python.d/memcached.conf
   template:
-    src: memcached.j2
+    src: modules-python.d/memcached.j2
     dest: /etc/netdata/python.d/memcached.conf
     group: netdata
     mode: 0640

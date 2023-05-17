@@ -1,0 +1,9 @@
+---
+
+- name: generate python.d/tomcat.conf
+  template:
+    src: modules-python.d/tomcat.j2
+    dest: /etc/netdata/python.d/tomcat.conf
+    group: netdata
+    mode: 0640
+  notify: restart netdata service

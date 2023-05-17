@@ -9,7 +9,6 @@ galaxy_info:
     - name: Ubuntu
       versions:
         - xenial
-          bionic
-          focal
+        - focal
   galaxy_tags:
     - netdata

@@ -1,0 +1,14 @@
+autodetection_retry: {{ plugin_autodetection_retry }}
+jobs:
+{% for pool in phpfpm_pools %}
+  - name: '{{ pool }}'
+    url: '{{ general_fpm_url_part }}-{{ pool }}?full&json'
+{% endfor %}
+{% for param in phpfpm_pools_direct|default([]) %}
+  - name: '{{ param.name }}'
+{% if param.address is defined %}    address: '{{ param.address }}' 
+{% endif %}
+{% if param.socket is defined %}    socket: '{{ param.socket }}' 
+{% endif %}
+    fcgi_path: '{{ param.fcgi_path|default("/fpm-status", true)}}'
+{% endfor %}

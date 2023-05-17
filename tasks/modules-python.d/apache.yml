@@ -1,0 +1,9 @@
+---
+
+- name: generate python.d/apache.conf
+  template:
+    src: modules-python.d/apache.j2
+    dest: /etc/netdata/python.d/apache.conf
+    group: netdata
+    mode: 0640
+  notify: restart netdata service

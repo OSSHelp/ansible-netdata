@@ -1,0 +1,7 @@
+---
+
+- name: generate go.d/prometheus.conf
+  template:
+    src: modules-go.d/prometheus.j2
+    dest: /etc/netdata/go.d/prometheus.conf
+    mode: 0644

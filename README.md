@@ -1,8 +1,17 @@
 # Netdata
 
-[![Build Status](https://drone.osshelp.io/api/badges/ansible/netdata/status.svg)](https://drone.osshelp.ru/ansible/netdata)
+[![Build Status](https://drone.osshelp.io/api/badges/ansible/netdata/status.svg)](https://drone.osshelp.io/ansible/netdata)
 
 The role installs Netdata and setups it configuration.
+
+## Supported distros
+
+Ubuntu versions currently supported:
+
+- xenial
+- focal
+
+Installation on bionic is possible with `netdata_version` override but **highly not recommended**: many python.d modules were removed in [v1.35.0](https://github.com/netdata/netdata/releases/tag/v1.35.0) and the role still has no proper replacement for them.
 
 ## Deploy example (with all default parametrs)
 
@@ -95,6 +104,9 @@ The automatic generation can be disabled entirely by switching `netdata_dynamic_
       tomcat_user: monitor
       tomcat_pass: paSSw0rd
       tomcat_connector: http-bio-8285
+      elastic_nodes:
+        - { name: local, url: http://127.0.0.1:9200 }
+      redis_stat_url: 'redis://@127.0.0.1:6379'
       phpfpm_pools:
         - prod
         - dev
@@ -204,6 +216,20 @@ anothergroup: anotherprocess*
       path: '/var/log/nginx/access2.log'
 ```
 
+Example for json log format:
+
+``` yaml
+- role: netdata
+    netdata_go_d_web_log_plugin_enabled: true
+    netdata_go_d_web_log_params:
+      - name: example_com
+        path: /var/log/nginx/example_com.access.log
+        log_type: json
+        url_patterns:
+          - { name: main, match: '~ ^/$' }
+          - { name: api, match: '~ ^/api/' }
+```
+
 ## Deploy example with custom general params
 
 ``` yaml
@@ -282,6 +308,7 @@ To use multiple API keys in stream.conf on host system you must provide your key
 ## TODO
 
 - add ansible check mode support
+- deal with actual versions support (go.d plugins)
 
 ## License
 

@@ -1,0 +1,9 @@
+---
+
+- name: generate go.d/redis.conf
+  template:
+    src: modules-go.d/redis.j2
+    dest: /etc/netdata/go.d/redis.conf
+    group: netdata
+    mode: 0640
+  notify: restart netdata service

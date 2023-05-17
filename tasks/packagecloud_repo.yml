@@ -1,0 +1,12 @@
+---
+
+- name: add pgp key
+  apt_key:
+    url: "https://packagecloud.io/netdata/netdata/gpgkey"
+    state: present
+
+- name: add packagecloud repo
+  apt_repository:
+    repo: "deb https://packagecloud.io/netdata/netdata/ubuntu/ {{ ansible_distribution_release }} main"
+    state: present
+    filename: netdata

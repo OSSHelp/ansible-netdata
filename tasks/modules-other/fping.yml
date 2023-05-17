@@ -4,16 +4,16 @@
   include_tasks: osshelp_repo.yml
   when: ansible_distribution_release == 'xenial'
 
-- name: Install fping package
+- name: install fping package
   apt:
     name: fping
     state: present
     update_cache: yes
     cache_valid_time: 86400
 
-- name: Deploy fping.conf in /etc/netdata
+- name: generate /etc/netdata/fping.conf
   template:
-    src: fping.j2
+    src: modules-other/fping.j2
     dest: /etc/netdata/fping.conf
     group: netdata
     mode: 0640

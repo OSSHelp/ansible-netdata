@@ -1,0 +1,6 @@
+autodetection_retry: {{ plugin_autodetection_retry }}
+jobs:
+{% for param in elastic_nodes|default([]) %}
+  - name: '{{ param.name }}'
+    url: '{{ param.url }}'
+{% endfor %}

@@ -1,4 +1,5 @@
 ---
+
 - name: Debug registered var
   debug: var=haproxy_pass
 
@@ -22,6 +23,10 @@
   debug: var=haproxy_auth_pass.stdout
   when: not netdata_force_all_plugins_installation
 
-- name: deploy haproxy.conf in python.d
-  template: src=haproxy.j2 dest=/etc/netdata/python.d/haproxy.conf group=netdata mode=0o640
+- name: generate python.d/haproxy.conf
+  template:
+    src: modules-python.d/haproxy.j2
+    dest: /etc/netdata/python.d/haproxy.conf
+    group: netdata
+    mode: 0640
   notify: restart netdata service

@@ -1,0 +1,9 @@
+---
+
+- name: generate python.d/smartd.conf
+  template:
+    src: modules-python.d/smartd.j2
+    dest: /etc/netdata/python.d/smartd_log.conf
+    group: netdata
+    mode: 0640
+  notify: restart netdata service

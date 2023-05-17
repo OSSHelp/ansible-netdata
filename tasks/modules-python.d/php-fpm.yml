@@ -1,0 +1,10 @@
+---
+
+- name: generate python.d/phpfpm.conf
+  template:
+    src: modules-python.d/php-fpm.j2
+    dest: /etc/netdata/python.d/phpfpm.conf
+    group: netdata
+    mode: 0640
+  notify: restart netdata service
+  when: phpfpm_pools

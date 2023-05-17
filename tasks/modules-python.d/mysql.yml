@@ -1,5 +1,6 @@
 ---
-- name: Install Python2 and Python3 packages
+
+- name: install python2 and python3 packages
   apt:
     name: [python-mysqldb, python3-mysqldb, python3-pymysql]
     state: present
@@ -7,7 +8,7 @@
     cache_valid_time: 86400
   when: ansible_distribution_release in ['xenial', 'bionic']
 
-- name: Install only Python3 packages
+- name: install python3 packages
   apt:
     name: [python3-mysqldb, python3-pymysql]
     state: present
@@ -15,7 +16,7 @@
     cache_valid_time: 86400
   when: ansible_distribution_release in ['focal']
 
-- name: Add Netdata MySQL user
+- name: add MySQL user for metric collection
   mysql_user:
     name: netdata
     password: "{{ lookup('password', '/tmp/my.cnf length=16 chars=ascii_letters,digits') }}"
@@ -25,7 +26,7 @@
   register: created_mysql_user
   when: not netdata_force_all_plugins_installation and (ansible_virtualization_type != 'lxc' or netdata_force_create_db_user)
 
-- name: generate my.cnf   # noqa 503
+- name: generate my.cnf  # noqa 503
   template:
     src: mycnf.j2
     dest: /etc/netdata/my.cnf
@@ -34,10 +35,10 @@
   notify: restart netdata service
   when: created_mysql_user.changed|default('false') or netdata_force_all_plugins_installation
 
-- name: deploy mysql.conf in python.d
+- name: generate python.d/mysql.conf
   template:
-    src: mysql.j2
+    src: modules-python.d/mysql.j2
     dest: /etc/netdata/python.d/mysql.conf
     group: netdata
-    mode: 0o640
+    mode: 0640
   notify: restart netdata service

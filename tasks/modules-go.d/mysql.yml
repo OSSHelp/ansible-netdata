@@ -1,0 +1,9 @@
+---
+
+- name: generate go.d/mysql.conf
+  template:
+    src: modules-go.d/mysql.j2
+    dest: /etc/netdata/go.d/mysql.conf
+    group: netdata
+    mode: 0640
+  notify: restart netdata service

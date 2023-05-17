@@ -1,4 +1,0 @@
----
-- name: deploy apache.conf in python.d
-  template: src=apache.j2 dest=/etc/netdata/python.d/apache.conf group=netdata mode=0o640
-  notify: restart netdata service

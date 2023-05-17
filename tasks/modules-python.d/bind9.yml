@@ -1,8 +1,8 @@
 ---
 
-- name: generate bind_rndc.conf in /etc/netdata/python.d
+- name: generate python.d/bind_rndc.conf
   template:
-    src: bind9.j2
+    src: modules-python.d/bind9.j2
     dest: /etc/netdata/python.d/bind_rndc.conf
     group: netdata
     mode: 0640

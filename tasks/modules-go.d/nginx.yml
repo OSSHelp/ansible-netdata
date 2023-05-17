@@ -1,0 +1,9 @@
+---
+
+- name: generate go.d/nginx.conf
+  template:
+    src: modules-go.d/nginx.j2
+    dest: /etc/netdata/go.d/nginx.conf
+    group: netdata
+    mode: 0640
+  notify: restart netdata service

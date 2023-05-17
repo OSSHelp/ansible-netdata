@@ -1,6 +1,5 @@
 ---
 - block:
-
     - name: gather required facts
       setup:
         gather_subset: [min]
@@ -11,14 +10,14 @@
       when: netdata_setup == "full" or netdata_setup == "install"
 
     - name: install fping
-      include_tasks: fping_plugin_setup.yml
+      include_tasks: modules-other/fping.yml
       when: netdata_setup == "full" or netdata_setup == "install"
 
-    - name: configuration main
-      include_tasks: configuration_main.yml
+    - name: configuration
+      include_tasks: configure.yml
       when: netdata_setup == "full" or netdata_setup == "configure"
 
-    - name: configuration python.d and go.d plugins
-      include_tasks: plugin_installation.yml
+    - name: set up python.d and go.d plugins
+      include_tasks: configure_plugins.yml
       when: netdata_setup == "full" or netdata_setup == "configure"
   when: not ansible_check_mode

@@ -1,4 +1,4 @@
-autodetection_retry: 300
+autodetection_retry: {{ plugin_autodetection_retry }}
 jobs:
 {% if netdata_go_d_web_log_params is mapping %}
   - name: '{{ netdata_go_d_web_log_params.name }}'

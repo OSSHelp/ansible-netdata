@@ -32,16 +32,8 @@
   notify: restart netdata service
   when: physical
 
-- name: add pgp key
-  apt_key:
-    url: "https://packagecloud.io/netdata/netdata/gpgkey"
-    state: present
-
-- name: add main repo
-  apt_repository:
-    repo: "deb https://packagecloud.io/netdata/netdata/ubuntu/ {{ ansible_distribution_release }} main"
-    state: present
-    filename: netdata
+- name: add repository
+  include_tasks: "{{ 'osshelp_repo.yml' if '1.31.0' in netdata_version else ( 'osshelp_repo.yml' if '1.34.1' in netdata_version else 'packagecloud_repo.yml' ) }}"  # noqa 204
 
 - name: install netdata
   apt:

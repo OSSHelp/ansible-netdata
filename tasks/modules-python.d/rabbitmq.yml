@@ -1,11 +1,12 @@
 ---
-- name: Enables the rabbitmq_management plugin
+
+- name: enable rabbitmq_management plugin
   rabbitmq_plugin:
     names: rabbitmq_management
     state: enabled
   when: not netdata_force_all_plugins_installation
 
-- name: Add Netdata RabbitMQ user
+- name: add RabbitMQ user for metric collection
   rabbitmq_user:
     user: netdata
     password: "{{ lookup('password', '/tmp/rabbitpass length=16 chars=ascii_letters,digits') }}"
@@ -16,9 +17,9 @@
   register: created_rabbitmq_user
   when: not netdata_force_all_plugins_installation and (ansible_virtualization_type != 'lxc' or netdata_force_create_db_user)
 
-- name: deploy rabbitmq.conf in python.d  # noqa 503
+- name: generate python.d/rabbitmq.conf  # noqa 503
   template:
-    src: rabbitmq.j2
+    src: modules-python.d/rabbitmq.j2
     dest: /etc/netdata/python.d/rabbitmq.conf
     group: netdata
     mode: 0o640
