@@ -1,7 +1,7 @@
 ---
 
 - name: add osshelp testing repository
-  include_tasks: osshelp_repo.yml
+  include_tasks: ../osshelp_repo.yml
   when: ansible_distribution_release == 'xenial'
 
 - name: install fping package
